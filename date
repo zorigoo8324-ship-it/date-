@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сокод зориулсан жижиг судалгаа 💌</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #ffd6e7, #e9d5ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: #3d2633;
+    }
+
+    .hearts {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .heart {
+        position: absolute;
+        bottom: -30px;
+        animation: float 6s linear infinite;
+        opacity: .6;
+        font-size: 20px;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+        20% {
+            opacity: .7;
+        }
+        100% {
+            transform: translateY(-110vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .card {
+        width: min(92%, 430px);
+        background: rgba(255,255,255,.94);
+        border-radius: 28px;
+        padding: 34px 25px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(100, 45, 80, .2);
+        position: relative;
+        z-index: 2;
+        animation: appear .5s ease;
+    }
+
+    @keyframes appear {
+        from {
+            transform: scale(.9);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    h1 {
+        margin: 0 0 15px;
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 23px;
+        margin-bottom: 12px;
+    }
+
+    p {
+        line-height: 1.6;
+        color: #694c5b;
+    }
+
+    .emoji {
+        font-size: 55px;
+        margin-bottom: 8px;
+    }
+
+    .buttons {
+        margin-top: 25px;
+        min-height: 90px;
+        position: relative;
+    }
+
+    button {
+        border: none;
+        border-radius: 50px;
+        padding: 14px 24px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .yes {
+        background: #ff5c91;
+        color: white;
+        box-shadow: 0 7px 20px rgba(255,92,145,.35);
+    }
+
+    .yes:hover {
+        transform: scale(1.05);
+    }
+
+    .no {
+        background: #eee;
+        color: #555;
+        position: absolute;
+        left: 55%;
+        top: 0;
+    }
+
+    .activity-list {
+        text-align: left;
+        background: #fff4f8;
+        border-radius: 18px;
+        padding: 18px 20px;
+        margin: 20px 0;
+    }
+
+    .activity-list div {
+        padding: 8px 0;
+        font-size: 16px;
+    }
+
+    input, textarea {
+        width: 100%;
+        border: 2px solid #f0d4df;
+        border-radius: 15px;
+        padding: 14px;
+        font-size: 16px;
+        outline: none;
+        margin-top: 8px;
+        font-family: inherit;
+    }
+
+    input:focus, textarea:focus {
+        border-color: #ff79a5;
+    }
+
+    textarea {
+        resize: none;
+        height: 90px;
+    }
+
+    .next {
+        margin-top: 20px;
+        width: 100%;
+        background: #ff5c91;
+        color: white;
+    }
+
+    .small {
+        font-size: 13px;
+        color: #92727f;
+        margin-top: 12px;
+    }
+
+    .success {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    .result {
+        background: #fff1f6;
+        border-radius: 18px;
+        padding: 15px;
+        margin-top: 18px;
+        text-align: left;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="hearts">
+    <span class="heart" style="left:10%;animation-delay:0s">💗</span>
+    <span class="heart" style="left:25%;animation-delay:2s">💕</span>
+    <span class="heart" style="left:45%;animation-delay:1s">💖</span>
+    <span class="heart" style="left:65%;animation-delay:3s">💗</span>
+    <span class="heart" style="left:85%;animation-delay:1.5s">💕</span>
+</div>
+
+<div class="card" id="app">
+
+    <div class="emoji">💌</div>
+
+    <h1>Соко, нэг жижиг судалгаа байна...</h1>
+
+    <p>
+        Чамтай холбоотой маш чухал асуулт байгаа юм аа. 👀
+    </p>
+
+    <h2>Надтай болзох уу? ❤️</h2>
+
+    <div class="buttons" id="buttonArea">
+        <button class="yes" onclick="startSurvey()">ТИЙМ ❤️</button>
+        <button class="no" id="noButton"
+                onmouseover="escapeButton()"
+                onclick="escapeButton()">
+            ҮГҮЙ 🥺
+        </button>
+    </div>
+
+    <p class="small">* “Үгүй” товч жаахан ичимхий юм байна 😂</p>
+
+</div>
+
+<script>
+
+function escapeButton() {
+    const btn = document.getElementById("noButton");
+    const area = document.getElementById("buttonArea");
+
+    const maxX = area.clientWidth - btn.offsetWidth;
+    const maxY = area.clientHeight - btn.offsetHeight;
+
+    const x = Math.max(0, Math.random() * maxX);
+    const y = Math.max(0, Math.random() * maxY);
+
+    btn.style.left = x + "px";
+    btn.style.top = y + "px";
+
+    const messages = [
+        "Нээрээ юу? 😭",
+        "Бодоод үз дээ 👀",
+        "Энэ товч ажиллахгүй байна 😂",
+        "Арай ч дээ 🥺",
+        "Тийм гэж дарах ёстой доо ❤️"
+    ];
+
+    btn.innerText = messages[Math.floor(Math.random() * messages.length)];
+}
+
+function startSurvey() {
+    document.getElementById("app").innerHTML = `
+        <div class="emoji">🎉</div>
+
+        <h1>Зөв хариулт сонголоо, Соко! ❤️</h1>
+
+        <p>
+            Одоо болзооны жижиг судалгаагаа үргэлжлүүлье. 😌
+        </p>
+
+        <h2>Бидний болзоонд хийх зүйлс 👀</h2>
+
+        <div class="activity-list">
+            <div>🍽️ Хамт хоол идэх</div>
+            <div>🎮 Хөгжилтэй тоглоом тоглох</div>
+            <div>🎬 Кино үзэх</div>
+            <div>🌃 Гадуур хамт алхах</div>
+        </div>
+
+        <p>
+            ✨ Мэдээж чи өөрийнхөө хиймээр байгаа
+            зүйлсийг бас нэмэж болно шүү.
+        </p>
+
+        <textarea id="customActivity"
+            placeholder="Чиний хиймээр байгаа зүйл... 👀"></textarea>
+
+        <button class="next" onclick="askDate()">
+            Дараагийнх ❤️
+        </button>
+    `;
+}
+
+function askDate() {
+    document.getElementById("app").innerHTML = `
+        <div class="emoji">📅</div>
+
+        <h1>За Соко...</h1>
+
+        <h2>Чи хэдний өдөр завтай вэ? 🥰</h2>
+
+        <p>
+            Болзоондоо уулзах боломжтой өдрөө сонгоорой.
+        </p>
+
+        <input type="date" id="date">
+
+        <button class="next" onclick="finishSurvey()">
+            Баталгаажуулах ❤️
+        </button>
+    `;
+}
+
+function finishSurvey() {
+
+    const date = document.getElementById("date").value;
+
+    if (!date) {
+        alert("Өдрөө сонгоорой, Соко 🥺❤️");
+        return;
+    }
+
+    const custom = window.customActivity || "";
+
+    const selectedDate = new Date(date + "T00:00:00");
+
+    const formattedDate = selectedDate.toLocaleDateString("mn-MN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+
+    document.getElementById("app").innerHTML = `
+        <div class="success">🥰</div>
+
+        <h1>Судалгаа амжилттай дууслаа!</h1>
+
+        <p>
+            Соко-гийн болзооны судалгааны хариу
+            амжилттай бүртгэгдлээ. 💕
+        </p>
+
+        <div class="result">
+            📅 <strong>Завтай өдөр:</strong><br>
+            ${formattedDate}
+        </div>
+
+        <div class="result">
+            🍽️ 🎮 🎬 🌃<br>
+            <strong>Болзоонд:</strong><br>
+            Хоол идэх, хөгжилтэй тоглоом тоглох,
+            кино үзэх, гадуур алхах...
+        </div>
+
+        ${
+            custom
+            ? `<div class="result">
+                ✨ <strong>Сокогийн нэмэлт санаа:</strong><br>
+                ${custom}
+               </div>`
+            : ""
+        }
+
+        <p style="margin-top:22px;">
+            Тэгэхээр энэ бол зүгээр нэг судалгаа биш болчихлоо шүү. 😂❤️
+        </p>
+
+        <h2>Тэр өдөр уулзъя, Соко. 🫶</h2>
+    `;
+}
+
+</script>
+
+</body>
+</html>
